@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daftar — the printed debt ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EA;
+    --paper-deep:#F3ead6;
+    --teal:#0F6B5C;
+    --verm:#FF4D1C;
+    --ink:#22302B;
+    --rule:#0F6B5C;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Archivo","Arial Narrow",Arial,sans-serif;
+    font-size:15px;
+    line-height:1.45;
+  }
+  .mono{font-family:"Space Mono","Courier New",monospace;font-variant-numeric:tabular-nums}
+  .hidden{display:none !important}
+
+  /* ---------- masthead: a printed press band ---------- */
+  .masthead{
+    position:relative;
+    border-bottom:3px solid var(--teal);
+    padding:18px 22px 14px;
+    overflow:hidden;
+  }
+  .masthead .grain{
+    position:absolute;inset:0;opacity:.05;pointer-events:none;
+  }
+  .masthead-row{display:flex;align-items:center;gap:16px;position:relative}
+  .brandmark{flex:0 0 auto}
+  .wordmark{
+    font-weight:900;font-size:34px;letter-spacing:.5px;color:var(--teal);
+    text-shadow:1.5px 1.5px 0 rgba(255,77,28,.55);
+    line-height:1;
+  }
+  .wordmark small{
+    display:block;font-weight:700;font-size:11px;letter-spacing:3px;color:var(--ink);
+    text-shadow:none;margin-top:5px;text-transform:uppercase;
+  }
+  .shop-line{margin-inline-start:auto;text-align:end}
+  .shop-line .shop-name{font-weight:700;font-size:17px}
+  .shop-line .shop-sub{font-family:"Space Mono","Courier New",monospace;font-size:11px;color:var(--teal)}
+  .reg-marks{display:flex;gap:6px;margin-top:6px;justify-content:flex-end}
+  .reg-marks i{width:14px;height:14px;border:2px solid var(--teal);border-radius:50%;display:block}
+  .reg-marks i:last-child{border-color:var(--verm);margin-inline-start:-11px;mix-blend-mode:multiply;background:rgba(255,77,28,.18)}
+
+  main{max-width:1180px;margin:0 auto;padding:20px 22px 60px}
+
+  h2.section-title{
+    font-weight:900;font-size:21px;color:var(--teal);margin:26px 0 4px;
+    text-shadow:1.5px 1.5px 0 rgba(255,77,28,.45);
+    text-transform:uppercase;letter-spacing:.6px;
+  }
+  .section-note{font-family:"Space Mono","Courier New",monospace;font-size:12px;margin:0 0 12px;color:var(--ink)}
+  hr.rule{border:0;border-top:2px solid var(--teal);margin:6px 0 14px}
+
+  /* ---------- buttons: printed blocks, no pills ---------- */
+  button{
+    font-family:"Archivo","Arial Narrow",Arial,sans-serif;font-weight:700;font-size:14px;
+    background:var(--teal);color:var(--paper);border:2px solid var(--teal);
+    padding:9px 16px;cursor:pointer;border-radius:0;letter-spacing:.3px;
+  }
+  button:hover{background:#0a574a}
+  button.secondary{background:transparent;color:var(--teal)}
+  button.secondary:hover{background:rgba(15,107,92,.08)}
+  button.verm{background:var(--verm);border-color:var(--verm);color:#fff}
+  button.verm:hover{background:#e03c10}
+  button:active{transform:translateY(1px)}
+
+  /* ---------- form controls: fully styled, nothing native leaks ---------- */
+  label{display:block;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin:12px 0 4px;color:var(--teal)}
+  input,select,textarea{
+    width:100%;font-family:"Space Mono","Courier New",monospace;font-size:14px;color:var(--ink);
+    background:#fffdf6;border:2px solid var(--teal);border-radius:0;padding:9px 10px;
+    appearance:none;-webkit-appearance:none;
+  }
+  input:focus,select:focus,textarea:focus{outline:3px solid rgba(255,77,28,.5);outline-offset:1px}
+  select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%230F6B5C' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;
+  }
+  input[type="date"]{position:relative}
+  input[type="file"]{padding:7px 10px}
+  input[type="file"]::file-selector-button{
+    font-family:"Archivo",Arial,sans-serif;font-weight:700;font-size:13px;
+    background:var(--teal);color:var(--paper);border:0;padding:6px 12px;margin-right:10px;cursor:pointer;border-radius:0;
+  }
+  textarea{resize:vertical;min-height:74px}
+  .error{color:var(--verm);font-weight:700;font-size:13px;min-height:18px;margin:6px 0 0}
+  .small{font-size:12.5px}
+  .hint{font-family:"Space Mono","Courier New",monospace;font-size:12.5px}
+
+  /* ---------- login sheet ---------- */
+  .login-sheet{
+    max-width:420px;margin:34px auto;background:#fffdf6;
+    border:2px solid var(--teal);padding:26px 26px 20px;position:relative;
+  }
+  .login-sheet::before{
+    content:"";position:absolute;top:-12px;left:26px;width:74px;height:20px;
+    background:var(--verm);mix-blend-mode:multiply;opacity:.85;
+  }
+  .login-sheet h2{margin:4px 0 2px;font-weight:900;font-size:22px;color:var(--teal);text-shadow:1.5px 1.5px 0 rgba(255,77,28,.45)}
+  .login-sheet p{margin:0 0 8px}
+
+  /* ---------- board: a ruled register, not stat cards ---------- */
+  .register{border:2px solid var(--teal);background:#fffdf6}
+  .reg-row{display:flex;flex-wrap:wrap;gap:0}
+  .reg-cell{flex:1 1 210px;padding:12px 16px;border-inline-end:1px solid rgba(15,107,92,.35)}
+  .reg-cell:last-child{border-inline-end:0}
+  .reg-cell .k{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal)}
+  .reg-cell .v{font-family:"Space Mono","Courier New",monospace;font-weight:700;font-size:24px;font-variant-numeric:tabular-nums}
+  .reg-cell .v.verm{color:var(--verm)}
+  .aging-strip{display:flex;border-top:2px solid var(--teal);font-family:"Space Mono","Courier New",monospace;font-size:12.5px}
+  .aging-strip div{flex:1;padding:8px 16px;border-inline-end:1px solid rgba(15,107,92,.35)}
+  .aging-strip div:last-child{border-inline-end:0}
+  .aging-strip b{display:block;font-size:15px}
+  .aging-strip .old{color:var(--verm)}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:end;margin:16px 0 4px}
+  .controls .field{flex:1 1 170px}
+  .controls label{margin-top:0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:14px}
+  @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+  .ledger-list{border-top:2px solid var(--teal)}
+  .ledger-list h3{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin:10px 0 6px}
+  .ledger-line{display:flex;justify-content:space-between;gap:10px;padding:6px 2px;border-bottom:1px solid rgba(15,107,92,.3);font-size:14px}
+  .ledger-line .amt{font-family:"Space Mono","Courier New",monospace;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ledger-line .when{font-family:"Space Mono","Courier New",monospace;font-size:12px;color:var(--teal)}
+
+  /* ---------- customer sheets with printed tab edges ---------- */
+  .sheets{display:grid;grid-template-columns:250px 1fr;gap:0;margin-top:8px}
+  @media (max-width:860px){.sheets{grid-template-columns:1fr}}
+  .tabs{display:flex;flex-direction:column;gap:8px;padding-top:10px}
+  .tab{
+    position:relative;text-align:start;background:#fffdf6;color:var(--ink);
+    border:2px solid var(--teal);border-inline-end:0;padding:10px 12px 10px 18px;
+    font-size:14px;display:block;width:100%;
+  }
+  .tab::before{
+    content:"";position:absolute;top:8px;bottom:8px;inset-inline-start:-9px;width:9px;
+    background:var(--teal);
+  }
+  .tab:nth-child(even)::before{background:var(--verm)}
+  .tab .t-name{font-weight:700;display:block}
+  .tab .t-bal{font-family:"Space Mono","Courier New",monospace;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .tab.active{background:var(--paper-deep);box-shadow:inset 4px 0 0 var(--teal)}
+  .tab.over{border-color:var(--verm)}
+  .tab.over::before{background:var(--teal);box-shadow:5px 0 0 var(--verm);mix-blend-mode:multiply}
+  .tab .over-stamp{
+    display:inline-block;margin-top:4px;font-family:"Space Mono","Courier New",monospace;
+    font-size:10.5px;font-weight:700;letter-spacing:1.5px;color:var(--verm);
+    border:2px solid var(--verm);padding:1px 6px;transform:rotate(-2deg);
+  }
+
+  /* ---------- statement: one continuous ruled sheet ---------- */
+  .page{
+    background:#fffdf6;border:2px solid var(--teal);padding:22px 24px;min-height:420px;position:relative;
+  }
+  .statement-head{border-bottom:3px double var(--teal);padding-bottom:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .statement-head h2{margin:0;font-weight:900;font-size:20px;color:var(--teal);text-shadow:1.5px 1.5px 0 rgba(255,77,28,.4)}
+  .statement-head p{margin:0;font-family:"Space Mono","Courier New",monospace;font-size:11.5px;letter-spacing:1px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);text-align:start;border-bottom:2px solid var(--teal);padding:6px 6px}
+  td{padding:6px;border-bottom:1px solid rgba(15,107,92,.28);vertical-align:top}
+  td.num,th.num{text-align:end;font-family:"Space Mono","Courier New",monospace;font-variant-numeric:tabular-nums}
+  td.run{font-weight:700;color:var(--verm)}
+  td .kind-debt{color:var(--ink);font-weight:700}
+  td .kind-pay{color:var(--teal);font-weight:700}
+  .flag-stamp{
+    display:inline-block;font-family:"Space Mono","Courier New",monospace;font-size:10px;font-weight:700;
+    letter-spacing:1px;color:var(--verm);border:2px solid var(--verm);padding:0 5px;transform:rotate(-3deg);
+  }
+  tr.just-printed td{animation:printin .45s ease-out}
+  @keyframes printin{
+    0%{opacity:0;transform:translateY(-3px);background:rgba(255,77,28,.14)}
+    60%{opacity:1;background:rgba(15,107,92,.10)}
+    100%{transform:none;background:transparent}
+  }
+  @media (prefers-reduced-motion:reduce){tr.just-printed td{animation:none}}
+  .balance-block{text-align:end}
+  .balance-block .bal{font-family:"Space Mono","Courier New",monospace;font-weight:700;font-size:22px;font-variant-numeric:tabular-nums}
+  .notice{
+    border:2px solid var(--verm);color:var(--ink);padding:10px 12px;margin:12px 0;
+    background:rgba(255,77,28,.06);font-size:13.5px;
+  }
+  .notice b{color:var(--verm)}
+  .panel{border:2px solid var(--teal);padding:16px 18px;background:var(--paper)}
+  .panel h3{margin:0 0 4px;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--teal)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .foot{margin-top:34px;border-top:2px solid var(--teal);padding-top:8px;font-family:"Space Mono","Courier New",monospace;font-size:11.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media print{
+    .masthead,.no-print,.tabs,.controls,.board-zone,.foot{display:none !important}
+    body{background:#fff}
+    .page{border:0}
+    main{padding:0}
+  }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <svg class="grain" width="100%" height="100%" aria-hidden="true"><filter id="gr"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(#gr)"/></svg>
+  <div class="masthead-row">
+    <svg class="brandmark" width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+      <rect x="8" y="5" width="34" height="42" fill="none" stroke="#0F6B5C" stroke-width="3"/>
+      <line x1="16" y1="5" x2="16" y2="47" stroke="#FF4D1C" stroke-width="3"/>
+      <line x1="22" y1="15" x2="37" y2="15" stroke="#0F6B5C" stroke-width="2.5"/>
+      <line x1="22" y1="24" x2="37" y2="24" stroke="#0F6B5C" stroke-width="2.5"/>
+      <line x1="22" y1="33" x2="31" y2="33" stroke="#FF4D1C" stroke-width="2.5"/>
+    </svg>
+    <div class="wordmark">DAFTAR<small>The printed debt ledger</small></div>
+    <div class="shop-line">
+      <div class="shop-name" id="shopName">Your shop ledger, never lost</div>
+      <div class="shop-sub">TWO INKS · ONE BOOK · NO LOOSE PAGES</div>
+      <div class="reg-marks" aria-hidden="true"><i></i><i></i></div>
+    </div>
+    <button id="logout" class="secondary hidden" type="button">Sign out</button>
+  </div>
+</header>
+
+<main>
+  <section id="loginBox" class="login-sheet">
+    <h2>Open the ledger</h2>
+    <p class="small">Demo account: shopkeeper / notebook123</p>
+    <label for="username">Username</label>
+    <input id="username" autocomplete="username" placeholder="shopkeeper">
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="notebook123">
+    <p id="loginError" class="error"></p>
+    <button id="loginBtn" type="button" style="width:100%">Open the ledger</button>
+  </section>
+
+  <div id="app" class="hidden">
+    <div class="board-zone">
+      <h2 class="section-title">The board</h2>
+      <p class="section-note">What is out, who owes it, and how old it is — printed as one register.</p>
+      <div class="register">
+        <div class="reg-row">
+          <div class="reg-cell"><div class="k">Total outstanding</div><div class="v" id="totalOut">0</div></div>
+          <div class="reg-cell"><div class="k">Customers owing</div><div class="v" id="debtorCount">0</div></div>
+          <div class="reg-cell"><div class="k">Over credit limit</div><div class="v verm" id="overCount">0</div></div>
+          <div class="reg-cell"><div class="k">Older than 30 days</div><div class="v" id="oldDebt">0</div></div>
+        </div>
+        <div class="aging-strip">
+          <div>0–7 days<b id="age0">0</b></div>
+          <div>8–30 days<b id="age1">0</b></div>
+          <div class="old">30+ days<b id="age2">0</b></div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="field"><label for="asOf">Board as of</label><input id="asOf" type="date"></div>
+        <div class="field" style="flex:2 1 240px"><label for="search">Find a customer</label><input id="search" type="search" placeholder="Name or phone digits, e.g. Hassan or 0101"></div>
+        <button id="refreshBtn" type="button">Refresh board</button>
+        <button id="exportBtn" class="secondary" type="button">Download ledger CSV</button>
+      </div>
+      <div id="boardDetails"></div>
+    </div>
+
+    <h2 class="section-title">Customer sheets</h2>
+    <p class="section-note">Each customer is a printed sheet. A tab printed in both inks means the customer is over the limit.</p>
+    <hr class="rule">
+    <div class="sheets">
+      <div>
+        <div id="customerTabs" class="tabs"></div>
+        <section class="panel no-print" style="margin-top:18px">
+          <h3>New customer</h3>
+          <label for="newName">Name</label><input id="newName">
+          <label for="newPhone">Phone</label><input id="newPhone" inputmode="tel">
+          <label for="newAddress">Address</label><input id="newAddress">
+          <label for="newLimit">Credit limit (EGP)</label><input id="newLimit" type="number" min="0" step="0.01" value="0">
+          <label for="newNote">Note</label><input id="newNote">
+          <p id="customerError" class="error"></p>
+          <button id="addCustomer" type="button" style="width:100%">Print the sheet</button>
+        </section>
+        <section class="panel no-print" style="margin-top:14px">
+          <h3>Import customers</h3>
+          <p class="small">CSV with columns: name, phone, credit_limit. Existing phones are skipped and reported.</p>
+          <label for="importFile">CSV file</label>
+          <input id="importFile" type="file" accept=".csv,text/csv">
+          <button id="importBtn" class="secondary" type="button" style="width:100%;margin-top:10px">Import the file</button>
+          <p id="importResult" class="small"></p>
+        </section>
+      </div>
+
+      <section id="statementPage" class="page">
+        <div class="statement-head">
+          <h2 id="printShop">Statement</h2>
+          <p>DAFTAR · CUSTOMER STATEMENT</p>
+        </div>
+        <div id="customerDetail">
+          <h2 style="font-weight:900;color:var(--teal)">Pick a sheet from the tabs</h2>
+          <p class="hint">The customer's account appears here line by line, with the running balance after every entry.</p>
+        </div>
+      </section>
+    </div>
+    <div class="foot"><span>Printed in two inks: teal for the record, vermillion for what needs attention.</span><span>EGP · amounts in Egyptian pounds</span></div>
+  </div>
+</main>
+
+<script>
+const apiBase = '';
+let token = localStorage.getItem('daftar_token') || '';
+let customers = [];
+let current = null;
+let justPrintedId = null;
+
+const $ = id => document.getElementById(id);
+const fmt = n => new Intl.NumberFormat('en-US', {maximumFractionDigits: 2}).format(Number(n || 0));
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+async function api(path, options = {}) {
+  const response = await fetch(apiBase + path, {
+    ...options,
+    headers: {'Authorization': 'Bearer ' + token, ...(options.headers || {})}
+  });
+  const type = response.headers.get('content-type') || '';
+  const data = type.includes('json') ? await response.json() : await response.text();
+  if (!response.ok) throw new Error(typeof data === 'object' ? (data.error || 'Something went wrong') : data);
+  return data;
+}
+
+async function login() {
+  $('loginError').textContent = '';
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username: $('username').value, password: $('password').value})
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Sign-in failed');
+    token = data.token;
+    localStorage.setItem('daftar_token', token);
+    $('shopName').textContent = data.shop.name;
+    showApp();
+    await loadAll();
+  } catch (error) {
+    $('loginError').textContent = error.message;
+  }
+}
+
+function showApp() {
+  $('loginBox').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('logout').classList.remove('hidden');
+}
+
+async function loadAll() {
+  await Promise.all([loadBoard(), loadCustomers()]);
+}
+
+async function loadBoard() {
+  const day = $('asOf').value || new Date().toISOString().slice(0, 10);
+  const board = await api('/api/board?as_of=' + encodeURIComponent(day));
+  $('totalOut').textContent = fmt(board.total_outstanding) + ' EGP';
+  $('debtorCount').textContent = board.customers_with_balance;
+  $('overCount').textContent = board.over_limit.length;
+  $('oldDebt').textContent = fmt(board.aging['30+']) + ' EGP';
+  $('age0').textContent = fmt(board.aging['0-7']) + ' EGP';
+  $('age1').textContent = fmt(board.aging['8-30']) + ' EGP';
+  $('age2').textContent = fmt(board.aging['30+']) + ' EGP';
+  const tops = board.top_debtors.map(c => `<div class="ledger-line"><span>${esc(c.name)}</span><span class="amt">${fmt(c.balance)} EGP</span></div>`).join('');
+  const oldest = board.oldest_unpaid.slice(0, 5).map(o => `<div class="ledger-line"><span>${esc(o.customer_name)} <span class="when">since ${esc(o.day)} · ${o.age_days} days</span></span><span class="amt">${fmt(o.left)} EGP</span></div>`).join('');
+  $('boardDetails').innerHTML = `<div class="grid2"><div class="ledger-list"><h3>Largest balances</h3>${tops || '<p class="hint">None.</p>'}</div><div class="ledger-list"><h3>Oldest open debts</h3>${oldest || '<p class="hint">None.</p>'}</div></div>`;
+}
+
+async function loadCustomers() {
+  const q = $('search').value.trim();
+  const data = await api('/api/customers' + (q ? '?q=' + encodeURIComponent(q) : ''));
+  customers = data.customers;
+  $('customerTabs').innerHTML = customers.map(c => `
+    <button class="tab ${current && current.id === c.id ? 'active' : ''} ${c.over_limit ? 'over' : ''}" data-id="${c.id}" type="button">
+      <span class="t-name">${esc(c.name)}</span>
+      <span class="t-bal">${fmt(c.balance)} EGP</span>
+      ${c.over_limit ? '<span class="over-stamp">Over limit</span>' : ''}
+    </button>`).join('') || '<p class="hint">No matching customers.</p>';
+  document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => openCustomer(Number(tab.dataset.id))));
+  if (current && !customers.some(c => c.id === current.id)) current = null;
+}
+
+async function openCustomer(id) {
+  const data = await api('/api/customers/' + id);
+  current = data.customer;
+  await loadCustomers();
+  renderCustomer();
+}
+
+function renderCustomer() {
+  if (!current) return;
+  const rows = current.entries.map(e => `
+    <tr class="${justPrintedId === e.id ? 'just-printed' : ''}">
+      <td class="mono">${esc(e.entry_date)}</td>
+      <td>${e.kind === 'debt' ? '<span class="kind-debt">Debt</span>' : '<span class="kind-pay">Payment</span>'}</td>
+      <td>${esc(e.description || (e.kind === 'debt' ? 'Goods' : 'Payment'))}</td>
+      <td class="num">${e.kind === 'debt' ? '+' : '−'} ${fmt(e.amount)}</td>
+      <td class="num run">${fmt(e.running_balance)}</td>
+      <td>${e.flagged ? '<span class="flag-stamp">Over limit</span>' : ''}</td>
+    </tr>`).join('');
+  justPrintedId = null;
+  $('customerDetail').innerHTML = `
+    <div class="row" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap">
+      <div><h2 style="margin:0;font-weight:900;color:var(--teal)">${esc(current.name)}</h2><div class="small mono">${esc(current.phone || '')} ${esc(current.address || '')}</div></div>
+      <div class="balance-block"><div class="small" style="letter-spacing:2px;font-weight:700;color:var(--teal)">BALANCE</div><div class="bal">${fmt(current.balance)} EGP</div><div class="small mono">credit limit ${fmt(current.credit_limit)} EGP</div></div>
+    </div>
+    ${current.over_limit ? '<div class="notice"><b>Over the credit limit.</b> New debt is still recorded, with the owner\'s knowledge, and the entry is stamped in the statement.</div>' : ''}
+    <h3 style="margin-top:20px;letter-spacing:2px;font-size:13px;text-transform:uppercase;color:var(--teal)">Statement</h3>
+    <div style="overflow:auto"><table><thead><tr><th>Date</th><th>Kind</th><th>Description</th><th class="num">Amount</th><th class="num">Balance after</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="grid2 no-print" style="margin-top:22px">
+      <section class="panel">
+        <h3>New entry</h3>
+        <label for="entryKind">Kind</label><select id="entryKind"><option value="debt">Took goods / debt</option><option value="payment">Paid an amount</option></select>
+        <label for="entryDate">Date</label><input id="entryDate" type="date" value="${new Date().toISOString().slice(0,10)}">
+        <label for="entryDesc">Description</label><input id="entryDesc" placeholder="What did they take?">
+        <label for="entryAmount">Amount (EGP)</label><input id="entryAmount" type="number" min="0.01" step="0.01">
+        <p id="entryError" class="error"></p>
+        <button id="saveEntry" class="verm" type="button" style="width:100%">Print the entry</button>
+      </section>
+      <section class="panel">
+        <h3>WhatsApp reminder</h3>
+        <p class="small">The text is prepared here only. The ledger never sends messages itself.</p>
+        <label for="reminderText">Reminder text</label>
+        <textarea id="reminderText" readonly>Press prepare</textarea>
+        <div class="actions">
+          <button id="makeReminder" type="button">Prepare text</button>
+          <button id="copyReminder" class="secondary" type="button">Copy text</button>
+          <button class="secondary" type="button" onclick="window.print()">Print statement</button>
+        </div>
+      </section>
+    </div>`;
+  $('saveEntry').addEventListener('click', saveEntry);
+  $('makeReminder').addEventListener('click', makeReminder);
+  $('copyReminder').addEventListener('click', () => navigator.clipboard.writeText($('reminderText').value));
+}
+
+async function saveEntry() {
+  $('entryError').textContent = '';
+  try {
+    const result = await api('/api/customers/' + current.id + '/entries', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        kind: $('entryKind').value,
+        entry_date: $('entryDate').value,
+        description: $('entryDesc').value,
+        amount: Number($('entryAmount').value)
+      })
+    });
+    if (result.entry && result.entry.id) justPrintedId = result.entry.id;
+    if (result.flagged) alert('The entry is printed, and the customer is now over the credit limit. The stamp shows in the statement.');
+    await Promise.all([openCustomer(current.id), loadBoard()]);
+  } catch (error) {
+    $('entryError').textContent = error.message;
+  }
+}
+
+async function makeReminder() {
+  const data = await api('/api/customers/' + current.id + '/reminder');
+  $('reminderText').value = data.text;
+}
+
+async function addCustomer() {
+  $('customerError').textContent = '';
+  try {
+    const data = await api('/api/customers', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: $('newName').value,
+        phone: $('newPhone').value,
+        address: $('newAddress').value,
+        note: $('newNote').value,
+        credit_limit: Number($('newLimit').value || 0)
+      })
+    });
+    ['newName','newPhone','newAddress','newNote'].forEach(id => $(id).value = '');
+    await loadCustomers();
+    await openCustomer(data.customer.id);
+  } catch (error) {
+    $('customerError').textContent = error.message;
+  }
+}
+
+async function importCustomers() {
+  const file = $('importFile').files[0];
+  if (!file) { $('importResult').textContent = 'Choose a CSV file first.'; return; }
+  try {
+    const text = await file.text();
+    const data = await api('/api/customers/import', {method: 'POST', headers: {'Content-Type': 'text/csv; charset=utf-8'}, body: text});
+    const skipped = data.skipped.map(s => `row ${s.row}: ${s.reason}`).join(', ');
+    $('importResult').textContent = `Added ${data.created} customers. Skipped ${data.skipped.length}. ${skipped}`;
+    await loadCustomers();
+  } catch (error) {
+    $('importResult').textContent = error.message;
+  }
+}
+
+async function exportLedger() {
+  const response = await fetch('/api/export/ledger.csv', {headers: {'Authorization': 'Bearer ' + token}});
+  if (!response.ok) { alert('Export failed'); return; }
+  const blob = await response.blob();
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'daftar-ledger.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+$('loginBtn').addEventListener('click', login);
+$('logout').addEventListener('click', () => { localStorage.removeItem('daftar_token'); location.reload(); });
+$('refreshBtn').addEventListener('click', loadAll);
+$('search').addEventListener('input', loadCustomers);
+$('addCustomer').addEventListener('click', addCustomer);
+$('importBtn').addEventListener('click', importCustomers);
+$('exportBtn').addEventListener('click', exportLedger);
+$('asOf').value = new Date().toISOString().slice(0, 10);
+if (token) {
+  api('/api/me').then(data => {
+    $('shopName').textContent = data.shop.name;
+    showApp();
+    loadAll();
+  }).catch(() => localStorage.removeItem('daftar_token'));
+}
+</script>
+</body>
+</html>
