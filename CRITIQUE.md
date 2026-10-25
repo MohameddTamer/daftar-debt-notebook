@@ -55,18 +55,18 @@ The credit limit flag was judged against the customers total balance at the mome
 - Money is stored as rounded SQLite reals. Fine at one shop scale, not formal accounting. Noted in the README.
 - The export test compares counts with a small tolerance because earlier tests in the same suite add entries to the shared database. The live walk above gives the exact figure on a clean seed instead.
 
-## Redesign and English conversion — 2026-10-24
+## Redesign and English conversion, 2026-10-24
 
 The interface was rebuilt as a Risograph Ledger (two spot inks, off-register Archivo headings, Space Mono figures, printed tab edges, over-limit stamps) and everything user-facing was converted to English only: UI, API errors, the WhatsApp reminder, seed names and descriptions, README example data and the tests' own fixture names. FULL rationale lives in DESIGN.md. Backend logic and money math were not touched.
 
 ### Tests before and after
 
-- Before the conversion: `python3 tests/test_daftar.py` — 16 tests, OK.
-- After the conversion and the frontend rewrite: the same command — **16 tests, OK**. The only test edits were fixture strings (test-created customer names, the import CSV rows, and the shop name asserted inside the reminder text, now "El Nour Grocery").
+- Before the conversion: `python3 tests/test_daftar.py`, 16 tests, OK.
+- After the conversion and the frontend rewrite: the same command, **16 tests, OK**. The only test edits were fixture strings (test-created customer names, the import CSV rows, and the shop name asserted inside the reminder text, now "El Nour Grocery").
 
-### Numbers unchanged — proof
+### Numbers unchanged, proof
 
-- Fresh seed after the conversion prints: `Customers: 12  Entries: 32  Shop balance: 10670.0` — the board total is still **10,670 EGP**, identical to the pre-redesign seed.
+- Fresh seed after the conversion prints: `Customers: 12  Entries: 32  Shop balance: 10670.0`, the board total is still **10,670 EGP**, identical to the pre-redesign seed.
 - Per-customer seed balances are untouched because only display strings changed; amounts, dates, phones and credit limits in `seed.py` are byte-identical values (470, 750, 1220, 1240, 1050, 750, 930, 870, 1650, 0, 900, 840).
 - The two flagged seed entries are still Mona Abdel Rahman's second debt (running balance 780 → 1,240 over her 1,000 limit) and Khaled Abu Saree's second debt (500 → 930 over his 700 limit); the over-limit flag regression test for backdated entries still passes.
 

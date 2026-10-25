@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0, 2026-10-24 — English conversion and the Risograph Ledger redesign
+## 1.1.0, 2026-10-24, English conversion and the Risograph Ledger redesign
 
 - The whole product is English only now: interface, API error messages, the WhatsApp reminder text, seed data, README and tests. Layout is LTR. The Egyptian setting stays, written in English words (El Nour Grocery, Market Street, Tanta-style neighbourhood shops).
 - The interface was rebuilt as a Risograph Ledger (see DESIGN.md): two spot inks only, teal #0F6B5C and fluorescent vermillion #FF4D1C on print paper #FBF6EA, Archivo headings printed slightly off register, Space Mono for every number, date and statement line.
